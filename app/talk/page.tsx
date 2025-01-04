@@ -5,7 +5,6 @@ import { useRef, useState } from "react";
 import ControlTray from "./Talk";
 import { Altair } from "@/components/altair/Altair";
 import cn from "classnames";
-import { Spacer } from "@nextui-org/spacer";
 
 export default function TalkPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -16,18 +15,14 @@ export default function TalkPage() {
     <div className="flex flex-col gap-4 h-screen justify-center items-center">
       <div className="main-app-area flex">
         <Altair />
-        {!videoRef.current || !videoStream ? (
-          <video
-            className={cn("rounded-md stream", {
-              hidden: !videoRef.current || !videoStream,
-            })}
-            ref={videoRef}
-            autoPlay
-            playsInline
-          />
-        ) : (
-          <Spacer x={4} />
-        )}
+        <video
+          className={cn("rounded-md stream", {
+            hidden: !videoRef.current || !videoStream,
+          })}
+          ref={videoRef}
+          autoPlay
+          playsInline
+        />
       </div>
       <div className="flex">
         {videoRef && (

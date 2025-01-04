@@ -197,7 +197,7 @@ function ControlTray({
         >
           <div className="connection-Button-container">
             <Button
-              color={connected ? "success" : "danger"}
+              color={connected ? "danger" : "success"}
               ref={connectButtonRef}
               className={cn("action-Button connect-toggle", { connected })}
               onPress={connected ? disconnect : connect}
