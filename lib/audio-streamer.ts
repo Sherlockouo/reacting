@@ -189,7 +189,7 @@ export class AudioStreamer {
         }
       } else {
         if (!this.checkInterval) {
-          this.checkInterval = window.setInterval(() => {
+          this.checkInterval = setInterval(() => {
             if (
               this.audioQueue.length > 0 ||
               this.processingBuffer.length >= this.bufferSize

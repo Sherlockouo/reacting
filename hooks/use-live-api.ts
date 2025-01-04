@@ -1,19 +1,3 @@
-/**
- * Copyright 2024 Google LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   MultimodalLiveAPIClientConnection,
@@ -32,6 +16,7 @@ export type UseLiveAPIResults = {
   connect: () => Promise<void>;
   disconnect: () => Promise<void>;
   volume: number;
+  geminiAudioNode: AudioNode | null;
 };
 
 export function useLiveAPI({
@@ -50,12 +35,18 @@ export function useLiveAPI({
   });
   const [volume, setVolume] = useState(0);
 
+  const [geminiAudioNode, setGeminiAudioNode] = useState<AudioNode | null>(
+    null,
+  );
+
   // register audio for streaming server -> speakers
   useEffect(() => {
     if (!audioStreamerRef.current) {
       audioContext({ id: "audio-out" }).then((audioCtx: AudioContext) => {
-        audioStreamerRef.current = new AudioStreamer(audioCtx);
-        audioStreamerRef.current
+        const streamer = new AudioStreamer(audioCtx);
+        audioStreamerRef.current = streamer;
+
+        streamer
 
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           .addWorklet<any>("vumeter-out", VolMeterWorket, (ev: any) => {
@@ -64,6 +55,10 @@ export function useLiveAPI({
           .then(() => {
             // Successfully added worklet
           });
+        if (streamer.gainNode) {
+          // 直接存到 state 里
+          setGeminiAudioNode(streamer.gainNode);
+        }
       });
     }
   }, [audioStreamerRef]);
@@ -114,5 +109,6 @@ export function useLiveAPI({
     connect,
     disconnect,
     volume,
+    geminiAudioNode,
   };
 }

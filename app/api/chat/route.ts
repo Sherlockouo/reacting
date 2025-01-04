@@ -11,7 +11,6 @@ export async function POST(req: NextRequest) {
       { status: 400 },
     );
   }
-  console.log("messages", messages);
 
   const stream = new ReadableStream({
     start(controller) {
@@ -30,7 +29,6 @@ export async function POST(req: NextRequest) {
         }),
         fetch: fetch,
         async onopen(response) {
-          console.log("response: ", response);
           if (
             response.ok
             // &&
