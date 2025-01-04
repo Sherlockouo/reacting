@@ -42,6 +42,7 @@ export class AudioStreamer {
     this.addPCM16 = this.addPCM16.bind(this);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async addWorklet<T extends (d: any) => void>(
     workletName: string,
     workletSrc: string,
@@ -154,7 +155,7 @@ export class AudioStreamer {
       const worklets = registeredWorklets.get(this.context);
 
       if (worklets) {
-        Object.entries(worklets).forEach(([workletName, graph]) => {
+        Object.entries(worklets).forEach(([, graph]) => {
           const { node, handlers } = graph;
           if (node) {
             source.connect(node);

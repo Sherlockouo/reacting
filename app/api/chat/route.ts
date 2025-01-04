@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: "",
+          Authorization: `Bearer ${process.env.API_KEY}`,
         },
         body: JSON.stringify({
           model: "deepseek-chat",

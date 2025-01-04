@@ -139,6 +139,12 @@ export default function ChatPanel() {
           placeholder="Type your message..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault(); // 防止换行
+              handleSend();
+            }
+          }}
           minRows={3}
           maxRows={3}
           className="mb-4"

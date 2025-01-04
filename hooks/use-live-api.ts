@@ -56,6 +56,8 @@ export function useLiveAPI({
       audioContext({ id: "audio-out" }).then((audioCtx: AudioContext) => {
         audioStreamerRef.current = new AudioStreamer(audioCtx);
         audioStreamerRef.current
+
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           .addWorklet<any>("vumeter-out", VolMeterWorket, (ev: any) => {
             setVolume(ev.data.volume);
           })

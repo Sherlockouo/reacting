@@ -36,7 +36,7 @@ import {
   ToolCallCancellation,
   ToolResponseMessage,
   type LiveConfig,
-} from "../multimodal-live-types";
+} from "@/types/multimodal-live-types";
 import { blobToJSON, base64ToArrayBuffer } from "./utils";
 
 /**
