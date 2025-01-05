@@ -11,7 +11,6 @@ import { AudioRecorder } from "@/lib/audio-recorder";
 import { Button } from "@nextui-org/react";
 import { MdOutlineSettingsVoice } from "react-icons/md";
 import { FaPause, FaPlay } from "react-icons/fa";
-import { AudioVisualizer } from "@/components/animation/audio";
 import { audioContext } from "@/lib/utils"; // 假设你有一个共享 AudioContext 的模块
 import { CircularAudioVisualizer } from "@/components/animation/CircularAudioVisualizer";
 
@@ -256,9 +255,10 @@ function ControlTray({
       </div>
 
       <div className="flex justify-center items-center gap-10">
-        <div className="rounded-md">
+        <div className="rounded-md text-center gap-2">
           {micAudioNode && (
             <CircularAudioVisualizer
+              className=" rounded-md"
               audioNode={micAudioNode}
               barCount={64} // 64根条
               radius={100} // 环半径
@@ -266,10 +266,13 @@ function ControlTray({
               minBarHeight={5}
             />
           )}
+          Me
         </div>
-        <div className="rounded-md">
+        <div className="rounded-md text-center">
           {geminiAudioNode && (
             <CircularAudioVisualizer
+              className=" rounded-md"
+              barColor="#00efef"
               audioNode={geminiAudioNode}
               barCount={64} // 64根条
               radius={100} // 环半径
@@ -277,6 +280,7 @@ function ControlTray({
               minBarHeight={5}
             />
           )}
+          Gemini
         </div>
       </div>
     </section>

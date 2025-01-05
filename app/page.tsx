@@ -26,10 +26,15 @@ export default function Home() {
         </p>
 
         {/* 去 Chat 页面按钮 */}
-        <div className="flex justify-center">
+        <div className="flex justify-center gap-1 items-center">
           <Link href="/chat">
             <Button color="primary" variant="flat">
               Go to Chat
+            </Button>
+          </Link>
+          <Link href="/talk">
+            <Button color="primary" variant="flat">
+              Go to Talk
             </Button>
           </Link>
         </div>
