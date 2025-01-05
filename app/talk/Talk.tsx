@@ -2,7 +2,6 @@
 "use client";
 
 import cn from "classnames";
-
 import { memo, ReactNode, RefObject, useEffect, useRef, useState } from "react";
 import { useLiveAPIContext } from "@/contexts/LiveAPIContext";
 import { UseMediaStreamResult } from "@/hooks/use-media-stream-mux";
@@ -12,7 +11,9 @@ import { AudioRecorder } from "@/lib/audio-recorder";
 import { Button } from "@nextui-org/react";
 import { MdOutlineSettingsVoice } from "react-icons/md";
 import { FaPause, FaPlay } from "react-icons/fa";
-import { AudioSpectrumVisualizer } from "@/components/AudioVisualizer";
+import { AudioVisualizer } from "@/components/animation/audio";
+import { audioContext } from "@/lib/utils"; // 假设你有一个共享 AudioContext 的模块
+import { CircularAudioVisualizer } from "@/components/animation/CircularAudioVisualizer";
 
 export type ControlTrayProps = {
   videoRef: RefObject<HTMLVideoElement | null>;
@@ -66,11 +67,55 @@ function ControlTray({
   const { client, connected, connect, disconnect, geminiAudioNode } =
     useLiveAPIContext();
 
+  // 共享的 AudioContext
+  const [sharedAudioContext, setSharedAudioContext] =
+    useState<AudioContext | null>(null);
+  const [micAudioNode, setMicAudioNode] = useState<AudioNode | null>(null);
+
+  // 初始化共享的 AudioContext
+  useEffect(() => {
+    // 假设你有一个 AudioContext 模块用于共享 AudioContext
+    audioContext()
+      .then((ctx) => {
+        setSharedAudioContext(ctx);
+      })
+      .catch((err) => {
+        console.error("无法创建 AudioContext:", err);
+      });
+  }, []);
+
+  // 获取麦克风的 MediaStream 并创建 AudioNode
+  useEffect(() => {
+    if (!sharedAudioContext) return;
+
+    const startRecording = async () => {
+      try {
+        const stream = await audioRecorder.start();
+        const source = sharedAudioContext.createMediaStreamSource(stream);
+        setMicAudioNode(source);
+      } catch (err) {
+        console.error("启动麦克风录制失败:", err);
+      }
+    };
+
+    if (connected && !muted) {
+      startRecording();
+    }
+
+    return () => {
+      audioRecorder.stop();
+      if (micAudioNode) {
+        micAudioNode.disconnect();
+      }
+    };
+  }, [connected, muted, audioRecorder, sharedAudioContext]);
+
   useEffect(() => {
     if (!connected && connectButtonRef.current) {
       connectButtonRef.current.focus();
     }
   }, [connected]);
+
   useEffect(() => {
     document.documentElement.style.setProperty(
       "--volume",
@@ -137,7 +182,7 @@ function ControlTray({
     };
   }, [connected, activeVideoStream, client, videoRef]);
 
-  //handler for swapping from one video-stream to the next
+  // handler for swapping from one video-stream to the next
   const changeStreams = (next?: UseMediaStreamResult) => async () => {
     if (next) {
       const mediaStream = await next.start();
@@ -191,7 +236,7 @@ function ControlTray({
         </nav>
 
         <div
-          className={cn("connection-container flex  gap-2 items-center", {
+          className={cn("connection-container flex gap-2 items-center", {
             connected,
           })}
         >
@@ -209,8 +254,30 @@ function ControlTray({
           <span className="text-indicator">👈 Click to talk to gemini !!</span>
         </div>
       </div>
-      <div className="flex justify-center items-center">
-        <AudioSpectrumVisualizer audioNode={geminiAudioNode} />
+
+      <div className="flex justify-center items-center gap-10">
+        <div className="rounded-md">
+          {micAudioNode && (
+            <CircularAudioVisualizer
+              audioNode={micAudioNode}
+              barCount={64} // 64根条
+              radius={100} // 环半径
+              maxBarHeight={50} // 条最大长度
+              minBarHeight={5}
+            />
+          )}
+        </div>
+        <div className="rounded-md">
+          {geminiAudioNode && (
+            <CircularAudioVisualizer
+              audioNode={geminiAudioNode}
+              barCount={64} // 64根条
+              radius={100} // 环半径
+              maxBarHeight={50} // 条最大长度
+              minBarHeight={5}
+            />
+          )}
+        </div>
       </div>
     </section>
   );
