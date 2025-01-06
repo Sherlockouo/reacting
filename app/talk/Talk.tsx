@@ -103,9 +103,9 @@ function ControlTray({
 
     return () => {
       audioRecorder.stop();
-      if (micAudioNode) {
-        micAudioNode.disconnect();
-      }
+      // if (micAudioNode) {
+      //   micAudioNode.disconnect();
+      // }
     };
   }, [connected, muted, audioRecorder, sharedAudioContext]);
 
