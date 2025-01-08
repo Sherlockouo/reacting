@@ -1,12 +1,12 @@
 // app/chat/page.tsx
 "use client";
 
-import ChatSidebar from "./ChatSidebar";
+import ChatSidebar from "@/components/ChatSidebar";
 import ChatPanel from "@/components/ChatPanel";
 
 export default function ChatPage() {
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen w-screen">
       {/* 左侧边栏 */}
       <ChatSidebar />
 

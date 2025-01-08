@@ -29,6 +29,8 @@ interface ChatState {
     role: Message["role"],
     content: string,
   ) => void;
+  addMessageContent: (sessionId: string, contentChunk: string) => void;
+  deleteSession: (sessionId: string) => void;
   clearSessionMessages: (sessionId: string) => void;
   switchModel: (model: string) => void;
   updateSessionTitle: (sessionId: string, newTitle: string) => void;
@@ -82,7 +84,25 @@ export const useChatStore = create<ChatState>()(
           return { sessions };
         });
       },
-
+      addMessageContent: (sessionId, contentChunk) =>
+        set((state) => ({
+          sessions: state.sessions.map((session) => {
+            if (session.id === sessionId) {
+              const lastMsgIndex = session.messages.length - 1;
+              const lastMsg = session.messages[lastMsgIndex];
+              if (lastMsg && lastMsg.role === "assistant") {
+                const updatedMsg = {
+                  ...lastMsg,
+                  content: lastMsg.content + contentChunk,
+                };
+                const updatedMsgs = [...session.messages];
+                updatedMsgs[lastMsgIndex] = updatedMsg;
+                return { ...session, messages: updatedMsgs };
+              }
+            }
+            return session;
+          }),
+        })),
       // 清空某个 Session 的消息（也可删除整个 Session）
       clearSessionMessages: (sessionId) => {
         set((state) => {
@@ -105,7 +125,17 @@ export const useChatStore = create<ChatState>()(
           selectedModel: model,
         }));
       },
-
+      deleteSession: (sessionId: string) => {
+        set((state) => ({
+          sessions: state.sessions.filter(
+            (session) => session.id !== sessionId,
+          ),
+          currentSessionId:
+            state.currentSessionId === sessionId
+              ? null
+              : state.currentSessionId,
+        }));
+      },
       updateSessionTitle: (sessionId, newTitle) => {
         set((state) => {
           const sessions = state.sessions.map((session) => {

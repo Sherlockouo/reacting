@@ -123,7 +123,7 @@ export default function ChatPanel() {
   };
 
   return (
-    <div className="flex-1 flex flex-col justify-center p-1">
+    <div className="flex-1 flex flex-col justify-center px-1">
       {/* 消息列表 */}
       <Card className="w-full my-2 h-[70vh] overflow-y-auto ">
         {currentSession.messages.map((msg, idx) => {
@@ -145,8 +145,7 @@ export default function ChatPanel() {
               handleSend();
             }
           }}
-          minRows={3}
-          maxRows={3}
+          maxRows={6}
           className="mb-4"
         />
         <div className="flex justify-end gap-4 items-center">

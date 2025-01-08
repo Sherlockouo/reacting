@@ -13,6 +13,10 @@ export default {
       colors: {
         background: "let(--background)",
         foreground: "let(--foreground)",
+        "user-light": "#0072F5",
+        "user-dark": "#1E88E5",
+        "ai-light": "#F1F5F9",
+        "ai-dark": "#333333",
       },
     },
   },

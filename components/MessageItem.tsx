@@ -10,37 +10,26 @@ type ChatMessageProps = {
 
 export default function MessageItem({ role, content }: ChatMessageProps) {
   const { theme } = useTheme();
-  // 当没有自定义主题时，这里通常返回 "light" 或 "dark"
-
-  // 可以根据当前主题进行颜色判断
   const isDark = theme === "dark";
 
-  const bubbleBg =
-    role === "user"
-      ? isDark
-        ? "#0072F5"
-        : "#0072F5" // 用户气泡示例（同一蓝色，仅示例）
-      : isDark
-        ? "#444444"
-        : "#000000"; // AI 气泡示例
+  let bubbleBg;
+  let textColor;
 
-  const textColor = isDark ? "#fff" : "#000";
+  if (role === "user") {
+    bubbleBg = isDark ? "user-dark" : "user-light";
+    textColor = isDark ? "text-white" : "text-black";
+  } else {
+    bubbleBg = isDark ? "ai-dark" : "ai-light";
+    textColor = isDark ? "text-white" : "text-black";
+  }
 
   return (
     <div className={`mb-2 ${role === "user" ? "text-right" : "text-left"}`}>
       <span
-        className="inline-block m-2 px-4 py-2 rounded"
-        style={{
-          backgroundColor: bubbleBg,
-          color: textColor,
-        }}
+        className={`inline-block m-2 px-4 py-2 rounded bg-${bubbleBg} ${textColor}`}
       >
         <MarkdownPreview
-          style={{
-            backgroundColor: "transparent",
-            borderRadius: "6px",
-            padding: "10px",
-          }}
+          className="bg-transparent rounded p-2"
           source={content}
         />
       </span>
